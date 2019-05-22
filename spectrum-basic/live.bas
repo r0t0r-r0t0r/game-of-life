@@ -36,10 +36,11 @@
 
 310 let alive = 0
 320 if code a$(curr,y,x) - 32 then go to 350
-330 rem live cell check
-340 if n = 2 or n = 3 then let alive = 1 : go to 370
-350 rem dead cell check
-360 if n = 3 then let alive = 1
+330 rem dead cell check
+340 if n = 3 then let alive = 1
+345 go to 370
+350 rem live cell check
+360 if n = 2 or n = 3 then let alive = 1
 
 370 let n$ = " "
 380 if alive then let n$ = s$
