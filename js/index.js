@@ -14,17 +14,6 @@ const defaultSettings = {
     grid: false,
 };
 
-const localStorageSettingsKey = 'settings';
-
-function getSettings() {
-    const localSettings = JSON.parse(window.localStorage.getItem(localStorageSettingsKey));
-    return localSettings || defaultSettings;
-}
-
-function saveSettings(settings) {
-    window.localStorage.setItem(localStorageSettingsKey, JSON.stringify(settings));
-}
-
 function getScreenSize({xPixelCount, pixelWidth, yPixelCount, pixelHeight}) {
     return [xPixelCount * pixelWidth, yPixelCount * pixelHeight];
 }
@@ -274,9 +263,7 @@ function createField(settings, initialBuf) {
 }
 
 function start() {
-    const settings = getSettings();
-    saveSettings(settings);
-
+    const settings = defaultSettings;
     const bufBuilder = createBufBuilder(settings);
 
     // bufBuilder.placeBlinker(10, 10);
