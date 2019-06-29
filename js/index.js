@@ -1,17 +1,17 @@
 "use strict";
 
 const defaultSettings = {
-    pixelWidth: 3,
-    pixelHeight: 3,
+    pixelWidth: 10,
+    pixelHeight: 10,
 
     bgColor: '#232323',
     fgColor: '#dbd580',
     gridColor: '#848484',
 
-    xPixelCount: 300,
-    yPixelCount: 300,
+    xPixelCount: 80,
+    yPixelCount: 80,
 
-    grid: false,
+    grid: true,
 };
 
 function getScreenSize({xPixelCount, pixelWidth, yPixelCount, pixelHeight}) {
@@ -70,14 +70,14 @@ function createFieldDrawer(settings, screen, getCell) {
     }
 
     function gridEnabled() {
-            drawGrid();
-            for (let y = 0; y < yPixelCount; y++) {
-                for (let x = 0; x < xPixelCount; x++) {
-                    if (getCell(x, y)) {
-                        drawCell(x, y)
-                    }
+        drawGrid();
+        for (let y = 0; y < yPixelCount; y++) {
+            for (let x = 0; x < xPixelCount; x++) {
+                if (getCell(x, y)) {
+                    drawCell(x, y)
                 }
             }
+        }
     }
 
     function gridDisabled() {
@@ -123,7 +123,7 @@ function createBufBuilder(settings) {
         buf[y][x + 1] = true;
         buf[y][x + 2] = true;
     }
-    
+
     function placeGlider(x, y) {
         fillRect(x, y, 3, 3, false);
         buf[y][x + 2] = true;
@@ -154,7 +154,7 @@ function createBufBuilder(settings) {
     function fillRandom(x = 0, y = 0, width = size[0], height = size[1]) {
         for (let cx = x; cx < x + width; cx++) {
             for (let cy = y; cy < y + height; cy++) {
-                buf[cy][cx] = Math.random() > 0.5;
+                buf[cy][cx] = Math.random() > 0.8;
             }
         }
     }
@@ -207,26 +207,6 @@ function createField(settings, initialBuf) {
             boolToNum(currFrame[prevY][prevX]);
     }
 
-    function getLiveNeighbourCount1(y, x) {
-        const prevX = x - 1;
-        const nextX = x + 1;
-        const prevY = y - 1;
-        const nextY = y + 1;
-
-        function boolToNum(v) {
-            return v ? 1 : 0;
-        }
-
-        return boolToNum(prevY >= 0 && currFrame[prevY][x]) +
-            boolToNum(prevY >= 0 && nextX < xPixelCount && currFrame[prevY][nextX]) +
-            boolToNum(nextX < xPixelCount && currFrame[y][nextX]) +
-            boolToNum(nextY < yPixelCount && nextX < xPixelCount && currFrame[nextY][nextX]) +
-            boolToNum(nextY < yPixelCount && currFrame[nextY][x]) +
-            boolToNum(nextY < yPixelCount && prevX >= 0 && currFrame[nextY][prevX]) +
-            boolToNum(prevX >= 0 && currFrame[y][prevX]) +
-            boolToNum(prevY >= 0 && prevX >= 0 && currFrame[prevY][prevX]);
-    }
-
     return {
         getCell(x, y) {
             return currFrame[y][x];
@@ -236,9 +216,9 @@ function createField(settings, initialBuf) {
                 for (let x = 0; x < xPixelCount; x++) {
                     const isDead = !currFrame[y][x];
                     const neighbourCount = getLiveNeighbourCount(y, x);
-        
+
                     let nextAlive = false;
-        
+
                     if (isDead) {
                         if (neighbourCount === 3) {
                             nextAlive = true;
@@ -252,7 +232,7 @@ function createField(settings, initialBuf) {
                             nextAlive = false;
                         }
                     }
-        
+
                     nextFrame[y][x] = nextAlive;
                 }
             }
@@ -266,17 +246,7 @@ function start() {
     const settings = defaultSettings;
     const bufBuilder = createBufBuilder(settings);
 
-    // bufBuilder.placeBlinker(10, 10);
-    // bufBuilder.placeGlider(1, 1);
-    // bufBuilder.placePentadecathlon(30, 5);
-
-    // bufBuilder.placeAcorn(150, 150);
-    //bufBuilder.fillRect(100, 100, 100, 100, true);
-
-    // bufBuilder.fillRandom();
-
-    const border = 3;
-    bufBuilder.fillRect(border, border, settings.xPixelCount - 2*border, settings.yPixelCount - 2*border, true);
+    bufBuilder.fillRandom();
 
     const initalFieldState = bufBuilder.build();
 
@@ -290,7 +260,7 @@ function start() {
     const drawers = [bgDrawer, fieldDrawer];
 
 
-    const framesForStep = 1;
+    const framesForStep = 5;
     let frameCounter = 0;
 
     function step(timestamp) {
@@ -308,8 +278,6 @@ function start() {
     }
 
     step(0);
-    // setInterval(step, 50);
-    // requestAnimationFrame(step);
 }
 
 start();
